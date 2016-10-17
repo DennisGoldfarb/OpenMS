@@ -40,6 +40,7 @@
 
 #include <OpenMS/CHEMISTRY/IsotopeDistribution.h>
 #include <OpenMS/CHEMISTRY/EmpiricalFormula.h>
+#include <OpenMS/CHEMISTRY/ElementDB.h>
 
 using namespace std;
 
@@ -168,23 +169,76 @@ namespace OpenMS
     estimateFromWeightAndComp(average_weight, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
   }
 
+  void IsotopeDistribution::estimateFromPeptideWeightAndS(double average_weight, UInt S)
+  {
+    // Element counts are from Senko's Averagine model, excluding sulfur.
+    estimateFromWeightAndCompAndS(average_weight, S, 4.9384, 7.7583, 1.3577, 1.4773, 0);
+  }
+
+  void IsotopeDistribution::estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    // Element counts are from Senko's Averagine model
+    estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
+  }
+
+  void IsotopeDistribution::estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor, double average_weight_fragment, UInt S_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end())+1;
+
+    double average_weight_comp_fragment = average_weight_precursor - average_weight_fragment;
+    double S_comp_fragment = S_precursor - S_fragment;
+
+    IsotopeDistribution id_comp_fragment(max_depth), id_fragment(max_depth);
+
+    id_fragment.estimateFromPeptideWeightAndS(average_weight_fragment, S_fragment);
+    id_comp_fragment.estimateFromPeptideWeightAndS(average_weight_comp_fragment, S_comp_fragment);
+
+    calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
+  }
 
   void IsotopeDistribution::estimateFromRNAWeight(double average_weight)
   {
     estimateFromWeightAndComp(average_weight, 9.75, 12.25, 3.75, 7, 0, 1);
   }
 
+  void IsotopeDistribution::estimateForFragmentFromRNAWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 9.75, 12.25, 3.75, 7, 0, 1);
+  }
 
   void IsotopeDistribution::estimateFromDNAWeight(double average_weight)
   {
     estimateFromWeightAndComp(average_weight, 9.75, 12.25, 3.75, 6, 0, 1);
   }
 
+  void IsotopeDistribution::estimateForFragmentFromDNAWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 9.75, 12.25, 3.75, 6, 0, 1);
+  }
+
   void IsotopeDistribution::estimateFromWeightAndComp(double average_weight, double C, double H, double N, double O, double S, double P)
   {
-      EmpiricalFormula ef;
-      ef.estimateFromWeightAndComp(average_weight, C, H, N, O, S, P);
-      distribution_ = ef.getIsotopeDistribution(max_isotope_).getContainer();
+    EmpiricalFormula ef;
+    ef.estimateFromWeightAndComp(average_weight, C, H, N, O, S, P);
+    distribution_ = ef.getIsotopeDistribution(max_isotope_).getContainer();
+  }
+
+  void IsotopeDistribution::estimateFromWeightAndCompAndS(double average_weight, UInt S, double C, double H, double N, double O, double P)
+  {
+    EmpiricalFormula ef;
+    ef.estimateFromWeightAndCompAndS(average_weight, S, C, H, N, O, P);
+    distribution_ = ef.getIsotopeDistribution(max_isotope_).getContainer();
+  }
+
+  void IsotopeDistribution::estimateForFragmentFromWeightAndComp(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes, double C, double H, double N, double O, double S, double P)
+  {
+    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end())+1;
+
+    EmpiricalFormula ef_comp_frag, ef_fragment;
+    ef_comp_frag.estimateFromWeightAndComp(average_weight_precursor-average_weight_fragment, C, H, N, O, S, P);
+    ef_fragment.estimateFromWeightAndComp(average_weight_fragment, C, H, N, O, S, P);
+
+    calcFragmentIsotopeDist(ef_fragment.getIsotopeDistribution(max_depth), ef_comp_frag.getIsotopeDistribution(max_depth), precursor_isotopes);
   }
 
   void IsotopeDistribution::calcFragmentIsotopeDist(const IsotopeDistribution& fragment_isotope_dist, const IsotopeDistribution& comp_fragment_isotope_dist, const std::vector<UInt>& precursor_isotopes)
