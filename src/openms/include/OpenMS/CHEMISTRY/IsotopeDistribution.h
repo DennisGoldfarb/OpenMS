@@ -134,10 +134,10 @@ public:
     void estimateFromPeptideWeight(double average_weight);
 
     /**
-        @brief Estimate peptide IsotopeDistribution from average weight and specified number of sulfurs
+        @brief Estimate peptide IsotopeDistribution from average weight and exact number of sulfurs
 
         @param average_weight: Average weight to estimate an EmpiricalFormula for
-        @param S: The explicit number of Sulfurs in this molecule
+        @param S: The exact number of Sulfurs in this molecule
     */
     void estimateFromPeptideWeightAndS(double average_weight, UInt S);
 
@@ -159,9 +159,9 @@ public:
 
       The max_depth of the isotopic distribution is set to max(precursor_isotopes)+1.
       @param average_weight_precursor: average weight of the precursor peptide
-      @param S_precursor: The explicit number of Sulfurs in the precursor peptide
+      @param S_precursor: The exact number of Sulfurs in the precursor peptide
       @param average_weight_fragment: average weight of the fragment
-      @param S_fragment: The explicit number of Sulfurs in the fragment
+      @param S_fragment: The exact number of Sulfurs in the fragment
       @param precursor_isotopes: the precursor isotopes that were isolated
     */
     void estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor, double average_weight_fragment, UInt S_fragment, const std::vector<UInt>& precursor_isotopes);
@@ -212,13 +212,35 @@ public:
     void estimateFromWeightAndComp(double average_weight, double C, double H, double N, double O, double S, double P);
 
     /**
-        @brief Estimate Isotopedistribution from weight, average composition, and number of isotopes that should be reported
+        @brief Estimate IsotopeDistribution from weight, exact number of sulfurs, and average remaining composition
 
-        
+        @param average_weight: Average weight to estimate an IsotopeDistribution for
+        @param S: The exact numbers of Sulfurs in this molecule
+        @param C: The approximate relative stoichiometry of Carbons to other elements (excluding Sulfur) in this molecule
+        @param H: The approximate relative stoichiometry of Hydrogens to other elements (excluding Sulfur) in this molecule
+        @param N: The approximate relative stoichiometry of Nitrogens to other elements (excluding Sulfur) in this molecule
+        @param O: The approximate relative stoichiometry of Oxygens to other elements (excluding Sulfur) in this molecule
+        @param P: The approximate relative stoichiometry of Phosphoruses to other elements (excluding Sulfur) in this molecule
+
     */
     void estimateFromWeightAndCompAndS(double average_weight, UInt S, double C, double H, double N, double O, double P);
 
+    /**
+        @brief Estimate fragment IsotopeDistribution from the precursor's average weight,
+        fragment's average weight, a list of isolated precursor isotopes, and average composition
 
+        The max_depth of the isotopic distribution is set to max(precursor_isotopes)+1.
+        @param average_weight_precursor: average weight of the precursor molecule
+        @param average_weight_fragment: average weight of the fragment molecule
+        @param precursor_isotopes: the precursor isotopes that were isolated@param S: The exact numbers of Sulfurs in this molecule
+        @param C: The approximate relative stoichiometry of Carbons to other elements in this molecule
+        @param H: The approximate relative stoichiometry of Hydrogens to other elements in this molecule
+        @param N: The approximate relative stoichiometry of Nitrogens to other elements in this molecule
+        @param O: The approximate relative stoichiometry of Oxygens to other elements in this molecule
+        @param S: The approximate relative stoichiometry of Sulfurs to other elements in this molecule
+        @param P: The approximate relative stoichiometry of Phosphoruses to other elements in this molecule
+
+     */
     void estimateForFragmentFromWeightAndComp(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes, double C, double H, double N, double O, double S, double P);
 
     /**

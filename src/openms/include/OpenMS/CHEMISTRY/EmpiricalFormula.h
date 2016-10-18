@@ -127,17 +127,17 @@ public:
 
     /**
      @brief Fills this EmpiricalFormula with an approximate elemental composition for a given average weight,
-     approximate elemental stoichiometry, and explicit number of sulfurs
+     exact number of sulfurs, and approximate elemental stoichiometry
 
      @param average_weight: Average weight to estimate an EmpiricalFormula for
-     @param S: The explicit number of Sulfurs in this molecule
-     @param C: The approximate relative stoichiometry of Carbons to other elements in this molecule
-     @param H: The approximate relative stoichiometry of Hydrogens to other elements in this molecule
-     @param N: The approximate relative stoichiometry of Nitrogens to other elements in this molecule
-     @param O: The approximate relative stoichiometry of Oxygens to other elements in this molecule
-     @param P: The approximate relative stoichiometry of Phosphoruses to other elements in this molecule
+     @param S: The exact number of Sulfurs in this molecule
+     @param C: The approximate relative stoichiometry of Carbons to other elements (excluding Sulfur) in this molecule
+     @param H: The approximate relative stoichiometry of Hydrogens to other elements (excluding Sulfur) in this molecule
+     @param N: The approximate relative stoichiometry of Nitrogens to other elements (excluding Sulfur) in this molecule
+     @param O: The approximate relative stoichiometry of Oxygens to other elements (excluding Sulfur) in this molecule
+     @param P: The approximate relative stoichiometry of Phosphoruses to other elements (excluding Sulfur) in this molecule
 
-     @return bool flag for whether the approximation succeeded without requesting negative hydrogens. true = no problems, 1 = negative hydrogens requested.
+     @return bool flag for whether the approximation succeeded without requesting negative hydrogens. true = no problems, false = negative hydrogens requested.
    */
     bool estimateFromWeightAndCompAndS(double average_weight, UInt S, double C, double H, double N, double O, double P);
 
