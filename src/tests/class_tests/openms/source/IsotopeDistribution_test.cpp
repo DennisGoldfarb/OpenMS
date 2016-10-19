@@ -366,15 +366,16 @@ START_SECTION(void estimateForFragmentFromPeptideWeight(double average_weight_pr
 	precursor_isotopes.push_back(1);
 	// These are regression tests, but the results also follow an expected pattern.
 
-	// All the fragments from M0 will also be monoisotopic, while a fragment from M+1
-	// that is half the mass of the precursor will be roughly 50/50 monoisotopic/M+1.
+	// All the fragments from the M0 precursor will also be monoisotopic, while a fragment
+	// that is half the mass of the precursor and coming from the M+1 precursor will be
+    // roughly 50/50 monoisotopic/M+1.
 	// For such a small peptide, the M0 precursor isotope is much more abundant than M+1.
 	// Therefore, it's much more likely this fragment will be monoisotopic.
 	iso.estimateForFragmentFromPeptideWeight(200.0, 100.0, precursor_isotopes);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.954654801320083)
 
-	// This peptide is larger so the M0 and M+1 precursors are similar in abundance.
+	// This peptide is large enough that the M0 and M+1 precursors are similar in abundance.
 	// However, since the fragment is only 1/20th the mass of the precursor, it's
 	// much more likely for the extra neutron to be on the complementary fragment.
 	// Therefore, it's still much more likely this fragment will be monoisotopic.
@@ -411,7 +412,7 @@ START_SECTION(void estimateForFragmentFromPeptideWeight(double average_weight_pr
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.542260764523188)
 
 	// If the fragment is identical to the precursor, then the distribution
-	// should be same as if it was just a precursor that wasn't isolated.
+	// should be the same as if it was just a precursor that wasn't isolated.
 	iso.estimateForFragmentFromPeptideWeight(200.0, 200.0, precursor_isotopes);
 	IsotopeDistribution iso_precursor(2);
 	iso_precursor.estimateFromPeptideWeight(200.0);
@@ -432,7 +433,6 @@ START_SECTION(void IsotopeDistribution::estimateForFragmentFromPeptideWeightAndS
 	// We're isolating the M+2 precursor isotopes
 	precursor_isotopes.push_back(2);
 	// These are regression tests, but the results also follow an expected pattern.
-
 
 	// With 0 sulfurs, it should be somewhat unlikely for the fragment to be M+2.
 	iso.estimateForFragmentFromPeptideWeightAndS(200.0, 0, 100.0, 0, precursor_isotopes);
@@ -457,9 +457,11 @@ START_SECTION(void IsotopeDistribution::estimateForFragmentFromPeptideWeightAndS
 	iso.estimateForFragmentFromPeptideWeightAndS(200.0, 1, 100.0, 1, precursor_isotopes);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.900804974056174)
+    // Both sulfurs are in the fragment, so it's even more likely for the fragment to be M+2
 	iso.estimateForFragmentFromPeptideWeightAndS(200.0, 2, 100.0, 2, precursor_isotopes);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.947862830751023)
+    // All 3 sulfurs are in the fragment
 	iso.estimateForFragmentFromPeptideWeightAndS(200.0, 3, 100.0, 3, precursor_isotopes);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.969454586761089)
@@ -490,13 +492,15 @@ START_SECTION(void IsotopeDistribution::estimateFromPeptideWeightAndS(double ave
 		TEST_REAL_SIMILAR(it2->second, it2->second)
 	}
 
-	// With one sulfur, it's more likely that the fragment is M+2.
+	// With one sulfur, it's more likely that the precursor is M+2 compared to having 0 sulfurs.
 	iso.estimateFromPeptideWeightAndS(100.0, 1);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.0439547771832361)
+    // With two sulfurs, the M+2 isotope is more likely
 	iso.estimateFromPeptideWeightAndS(100.0, 2);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.0804989104418586)
+    // With three sulfurs, the M+2 isotope is even more likely
 	iso.estimateFromPeptideWeightAndS(100.0, 3);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.rbegin()->second, 0.117023432503842)
