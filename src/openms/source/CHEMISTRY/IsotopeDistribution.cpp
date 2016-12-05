@@ -41,6 +41,7 @@
 #include <OpenMS/CHEMISTRY/IsotopeDistribution.h>
 #include <OpenMS/CHEMISTRY/EmpiricalFormula.h>
 #include <OpenMS/CHEMISTRY/ElementDB.h>
+#include <OpenMS/CHEMISTRY/FragmentIsotopeDistributionModel.h>
 
 using namespace std;
 
@@ -179,6 +180,22 @@ namespace OpenMS
   {
     // Element counts are from Senko's Averagine model
     estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
+  }
+
+  void IsotopeDistribution::estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    // Check if the splines can handle this request
+    if (FragmentIsotopeDistributionModel::getInstance()->canHandleRequest(average_weight_precursor, average_weight_fragment, precursor_isotopes))
+    {
+      ContainerType result;
+      FragmentIsotopeDistributionModel::getInstance()->getProbabilities(result, average_weight_precursor, average_weight_fragment, precursor_isotopes);
+      distribution_ = result;
+    }
+    else
+    {
+      // Element counts are from Senko's Averagine model
+      estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
+    }
   }
 
   void IsotopeDistribution::estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor, double average_weight_fragment, UInt S_fragment, const std::vector<UInt>& precursor_isotopes)

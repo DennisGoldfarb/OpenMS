@@ -11,6 +11,7 @@ EnzymaticDigestionLogModel.cpp
 EnzymaticDigestion.cpp
 Enzyme.cpp
 EnzymesDB.cpp
+FragmentIsotopeDistributionModel.cpp
 IsotopeDistribution.cpp
 ModificationDefinition.cpp
 ModificationDefinitionsSet.cpp

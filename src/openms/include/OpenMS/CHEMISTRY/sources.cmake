@@ -11,6 +11,7 @@ EnzymaticDigestionLogModel.h
 EnzymaticDigestion.h
 Enzyme.h
 EnzymesDB.h
+FragmentIsotopeDistributionModel.h
 IsotopeDistribution.h
 ModificationDefinition.h
 ModificationDefinitionsSet.h

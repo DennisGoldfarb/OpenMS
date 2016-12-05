@@ -160,6 +160,9 @@ public:
     */
     void estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
 
+
+    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+
     /**
         @brief Estimate peptide fragment IsotopeDistribution from the precursor's average weight,
         number of sulfurs in the precursor, fragment's average weight, number of sulfurs in the fragment,
@@ -388,6 +391,9 @@ protected:
 
     /// stores the isotope distribution
     ContainerType distribution_;
+
+    /// spline models for fast fragment isotopic distribution estimation
+    //FragmentIsotopeDistributionModel fragmentIsotopeDistributionModel;
   };
 
 } // namespace OpenMS
