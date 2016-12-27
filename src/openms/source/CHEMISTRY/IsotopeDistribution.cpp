@@ -185,10 +185,10 @@ namespace OpenMS
   void IsotopeDistribution::estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
   {
     // Check if the splines can handle this request
-    if (FragmentIsotopeDistributionModel::getInstance()->canHandleRequest(average_weight_precursor, average_weight_fragment, precursor_isotopes))
+    if (FragmentIsotopeDistributionModel::getInstance()->inModelBounds(average_weight_precursor, average_weight_fragment, precursor_isotopes))
     {
       ContainerType result;
-      FragmentIsotopeDistributionModel::getInstance()->getProbabilities(result, average_weight_precursor, average_weight_fragment, precursor_isotopes);
+      FragmentIsotopeDistributionModel::getInstance()->approximateIsotopeDistribution(result, average_weight_precursor, average_weight_fragment, precursor_isotopes);
       distribution_ = result;
     }
     else

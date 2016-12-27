@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="models" type="modelsType">
+        <xs:annotation>
+            <xs:documentation>
+                XML Schema for tensor-product splines that approximate the isotopic distributions of MS/MS fragments.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="modelsType">
+        <xs:sequence minOccurs="1">
+            <xs:element name="model" type="individualModelType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="individualModelType">
+        <xs:attribute name="S" type="xs:nonNegativeInteger" use="optional"/>
+        <xs:attribute name="CS" type="xs:nonNegativeInteger" use="optional"/>
+        <xs:attribute name="Se" type="xs:nonNegativeInteger" use="optional"/>
+        <xs:attribute name="CSe" type="xs:nonNegativeInteger" use="optional"/>
+        <xs:attribute name="PrecursorIsotope" type="xs:nonNegativeInteger" use="required"/>
+        <xs:attribute name="FragmentIsotope" type="xs:nonNegativeInteger" use="required"/>
+        <xs:attribute name="PrecursorOrder" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="FragmentOrder" type="xs:positiveInteger" use="required"/>
+
+        <xs:sequence>
+            <xs:element name="fragmentMassBreaks" type="xs:base64Binary" minOccurs="1" maxOccurs="1">
+                <xs:attribute name="precision" type="xs:positiveInteger"/>
+                <xs:attribute name="endian" type="xs:string"/>
+                <xs:attribute name="length" type="xs:positiveInteger"/>
+            </xs:element>
+
+            <xs:element name="precursorMassBreaks" type="xs:base64Binary" minOccurs="1" maxOccurs="1">
+                <xs:attribute name="precision" type="xs:positiveInteger"/>
+                <xs:attribute name="endian" type="xs:string"/>
+                <xs:attribute name="length" type="xs:positiveInteger"/>
+            </xs:element>
+
+            <xs:element name="coefficients" type="xs:base64Binary" minOccurs="1" maxOccurs="1">
+                <xs:attribute name="precision" type="xs:positiveInteger"/>
+                <xs:attribute name="endian" type="xs:string"/>
+                <xs:attribute name="length" type="xs:positiveInteger"/>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

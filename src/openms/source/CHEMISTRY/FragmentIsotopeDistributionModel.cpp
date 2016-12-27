@@ -33,43 +33,110 @@
 // --------------------------------------------------------------------------
 
 #include <OpenMS/CHEMISTRY/FragmentIsotopeDistributionModel.h>
+#include <OpenMS/SYSTEM/File.h>
+#include <OpenMS/FORMAT/IsotopeSplineXMLFile.h>
 
+#include <cmath>
+#include <algorithm>
 #include <iostream>
+
+
 
 using namespace std;
 
 namespace OpenMS
 {
-    FragmentIsotopeDistributionModel::FragmentIsotopeDistributionModel()
+  FragmentIsotopeDistributionModel::FragmentIsotopeDistributionModel()
+  {
+    readSplineModelsFromFile_("CHEMISTRY/IsotopeSplines.xml");
+    min_fragment_mass = 300;
+    min_precursor_mass = 300;
+    max_fragment_mass = 8500;
+    max_precursor_mass = 8500;
+  }
+
+  FragmentIsotopeDistributionModel::~FragmentIsotopeDistributionModel()
+  {
+    clear_();
+  }
+
+  void FragmentIsotopeDistributionModel::readSplineModelsFromFile_(const String& filename) {
+    String file = File::find(filename);
+
+    IsotopeSplineXMLFile splineFile;
+    splineFile.load(file, &this->models);
+  }
+
+  void FragmentIsotopeDistributionModel::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end())+1;
+    result.resize(max_depth);
+
+    for (UInt fragment_isotope = 0; fragment_isotope < max_depth; ++fragment_isotope)
     {
-        readSplineModelsFromFile_("CHEMISTRY/peptideFragmentIsotopeSplines.xml");
+      result[fragment_isotope] = make_pair(Size(average_weight_fragment + fragment_isotope), 0);
     }
 
-    FragmentIsotopeDistributionModel::~FragmentIsotopeDistributionModel()
+    for (std::vector<UInt>::const_iterator precursor_isotope_itr = precursor_isotopes.begin(); precursor_isotope_itr != precursor_isotopes.end(); ++precursor_isotope_itr)
     {
-        clear_();
+      for (UInt fragment_isotope = 0; fragment_isotope <= *precursor_isotope_itr; ++fragment_isotope)
+      {
+          // get model index
+          //UInt model_index = getModelIndex(average_weight_precursor, average_weight_fragment, *precursor_isotope_itr, fragment_isotope);
+          ModelAttributes att(0, 0, 0, 0, *precursor_isotope_itr, fragment_isotope);
+
+          // add contribution for this fragment isotope from this precursor isotope
+          result[fragment_isotope].second += models[att]->evaluate_model(average_weight_precursor, average_weight_fragment);
+      }
     }
+  }
 
-    void FragmentIsotopeDistributionModel::readSplineModelsFromFile_(const String& filename) {
-
-    }
-
-    double FragmentIsotopeDistributionModel::getProbabilities(IsotopeDistribution::ContainerType result, double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  bool FragmentIsotopeDistributionModel::inModelBounds(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    // Check if masses are in bounds
+    if (average_weight_precursor < min_precursor_mass || average_weight_precursor > max_precursor_mass
+          || average_weight_fragment < min_fragment_mass || average_weight_fragment > max_fragment_mass)
     {
-
+      return false;
     }
 
-    bool FragmentIsotopeDistributionModel::canHandleRequest(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+    // Check if isolated isotopes are in bounds
+    for (std::vector<UInt>::const_iterator itr = precursor_isotopes.begin(); itr != precursor_isotopes.end(); ++itr)
     {
-
+      if (*itr > max_isotope)
+      {
+        return false;
+      }
     }
 
-    void FragmentIsotopeDistributionModel::clear_() {
-        clearModels_();
-    }
+    // All checks passed
+    return true;
+  }
 
-    void FragmentIsotopeDistributionModel::clearModels_() {
+  UInt FragmentIsotopeDistributionModel::getModelIndex(double precursor_mass, double fragment_mass, UInt precursor_isotope, UInt fragment_isotope)
+  {
+    UInt models_per_precursor_isotope = max_isotope + 1;
+    UInt models_per_fragment_mass = (max_isotope + 1) * models_per_precursor_isotope;
+    UInt models_per_precursor_mass = ((max_fragment_mass - min_fragment_mass) / fragment_mass_step) * models_per_fragment_mass;
 
+    UInt precursor_mass_index = floor((precursor_mass-min_precursor_mass) / precursor_mass_step);
+    UInt fragment_mass_index = floor((fragment_mass-min_fragment_mass) / fragment_mass_step);
+
+    return (precursor_mass_index * models_per_precursor_mass)
+           + (fragment_mass_index * models_per_fragment_mass)
+           + (precursor_isotope * models_per_precursor_isotope)
+           + fragment_isotope;
+  }
+
+  void FragmentIsotopeDistributionModel::clear_() {
+    clearModels_();
+  }
+
+  void FragmentIsotopeDistributionModel::clearModels_() {
+    for (Iterator itr = models.begin(); itr != models.end(); ) {
+      itr = models.erase(itr);
     }
+    models.clear();
+  }
 
 }

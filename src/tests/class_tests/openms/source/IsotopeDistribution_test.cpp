@@ -359,7 +359,7 @@ START_SECTION(void estimateForFragmentFromRNAWeight(double average_weight_precur
 END_SECTION
 
 START_SECTION(void estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes))
-	IsotopeDistribution iso;
+	IsotopeDistribution iso, iso2;
 	std::vector<UInt> precursor_isotopes;
 	// We're isolating the M0 and M+1 precursor isotopes
 	precursor_isotopes.push_back(0);
@@ -395,7 +395,7 @@ START_SECTION(void estimateForFragmentFromPeptideWeight(double average_weight_pr
 	// probability of the M0 fragment should be in the 75% range.
 	//                  i.e. (100% * 50%) + (50% * 50%) = 75%
 	// M0 frags due to M0 precursor^             ^M0 frags due to M+1 precursor
-	iso.estimateForFragmentFromPeptideWeight(2000.0, 1000.0, precursor_isotopes);
+	iso.estimateForFragmentFromPeptideWeightFast(2000.0, 1000.0, precursor_isotopes);
 	iso.renormalize();
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.741290977639283)
 

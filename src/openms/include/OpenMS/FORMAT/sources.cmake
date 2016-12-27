@@ -47,6 +47,7 @@ IndexedMzMLFile.h
 IndexedMzMLFileLoader.h
 InspectInfile.h
 InspectOutfile.h
+IsotopeSplineXMLFile.h
 KroenikFile.h
 LibSVMEncoder.h
 MS2File.h

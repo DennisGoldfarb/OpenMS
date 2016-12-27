@@ -37,8 +37,11 @@
 
 #include <OpenMS/DATASTRUCTURES/String.h>
 #include <OpenMS/CHEMISTRY/IsotopeDistribution.h>
+#include <OpenMS/MATH/MISC/TensorProductSpline.h>
 
 #include <OpenMS/config.h>
+
+#include <map>
 
 namespace OpenMS
 {
@@ -49,65 +52,83 @@ namespace OpenMS
       The models stored in this DB are defined in a
       XML file under data/CHEMISTRY/peptideFragmentIsotopeSplines.xml
     */
-    class OPENMS_DLLAPI FragmentIsotopeDistributionModel {
+  class OPENMS_DLLAPI FragmentIsotopeDistributionModel
+  {
 
     public:
+      typedef std::map<ModelAttributes, TensorProductSpline*>::iterator Iterator;
 
-        /// this member function serves as a replacement of the constructor
-        inline static FragmentIsotopeDistributionModel* getInstance()
+      /// this member function serves as a replacement of the constructor
+      inline static FragmentIsotopeDistributionModel* getInstance()
+      {
+        static FragmentIsotopeDistributionModel* model_ = 0;
+        if (model_ == 0)
         {
-            static FragmentIsotopeDistributionModel* model_ = 0;
-            if (model_ == 0)
-            {
-                model_ = new FragmentIsotopeDistributionModel;
-            }
-            return model_;
+            model_ = new FragmentIsotopeDistributionModel;
         }
+        return model_;
+      }
 
-        /** @name Constructors and Destructors
-        */
-        //@{
-        /// destructor
-        virtual ~FragmentIsotopeDistributionModel();
-        //@}
+      /** @name Constructors and Destructors
+      */
+      //@{
+      /// destructor
+      virtual ~FragmentIsotopeDistributionModel();
+      //@}
 
-        double getProbabilities(IsotopeDistribution::ContainerType result, double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+      void approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
 
-        bool canHandleRequest(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+      bool inModelBounds(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
     private:
 
     protected:
 
-        /** @name Private Constructors
-        */
-        //@{
-        /// default constructor
-        FragmentIsotopeDistributionModel();
+      /** @name Private Constructors
+      */
+      //@{
+      /// default constructor
+      FragmentIsotopeDistributionModel();
 
-        ///copy constructor
-        FragmentIsotopeDistributionModel(const FragmentIsotopeDistributionModel& fragment_isotope_model);
-        //@}
+      ///copy constructor
+      FragmentIsotopeDistributionModel(const FragmentIsotopeDistributionModel& fragment_isotope_model);
+      //@}
 
-        /** @name Assignment
-        */
-        //@{
-        /// assignment operator
-        FragmentIsotopeDistributionModel& operator=(const FragmentIsotopeDistributionModel& fragment_isotope_model);
-        //@}
+      /** @name Assignment
+      */
+      //@{
+      /// assignment operator
+      FragmentIsotopeDistributionModel& operator=(const FragmentIsotopeDistributionModel& fragment_isotope_model);
+      //@}
 
-        /**
-        @brief reads spline models from the given file
+      /**
+      @brief reads spline models from the given file
 
-        @throw Exception::ParseError if the file cannot be parsed
-        */
-        void readSplineModelsFromFile_(const String& filename);
+      @throw Exception::ParseError if the file cannot be parsed
+      */
+      void readSplineModelsFromFile_(const String& filename);
 
-        /// deletes all sub-instances of the stored data
-        void clear_();
+      /// deletes all sub-instances of the stored data
+      void clear_();
 
-        /// deletes all models
-        void clearModels_();
-    };
+      /// deletes all models
+      void clearModels_();
+
+      UInt getModelIndex(double precursor_mass, double fragment_mass, UInt precursor_isotope, UInt fragment_isotope);
+
+      //std::vector<TensorProductSpline> models;
+
+      float min_precursor_mass;
+      float max_precursor_mass;
+      float precursor_mass_step;
+
+      float min_fragment_mass;
+      float max_fragment_mass;
+      float fragment_mass_step;
+
+      UInt max_isotope;
+
+      std::map<ModelAttributes, TensorProductSpline*> models;
+  };
 
 }
 
