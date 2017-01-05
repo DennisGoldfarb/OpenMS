@@ -29,6 +29,7 @@ IndexedMzMLFile.cpp
 IndexedMzMLFileLoader.cpp
 InspectInfile.cpp
 InspectOutfile.cpp
+IsotopeSplineXMLFile.cpp
 KroenikFile.cpp
 LibSVMEncoder.cpp
 MS2File.cpp

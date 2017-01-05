@@ -134,6 +134,13 @@ public:
     void estimateFromPeptideWeight(double average_weight);
 
     /**
+        @brief Estimate peptide isotope distribution from weight and number of isotopes that should be reported
+
+        A precomputed spline is used if the request is in the spline models' bounds.
+    */
+    void estimateFromPeptideWeightFast(double average_weight);
+
+    /**
         @brief Estimate Nucleotide Isotopedistribution from weight and number of isotopes that should be reported
 
         averagine model from Zubarev, R. A.; Demirev, P. A. in
@@ -171,6 +178,8 @@ public:
         @pre precursor_isotopes.size() > 0
     */
     void estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+
+    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
 
     /**
         @brief Estimate RNA fragment IsotopeDistribution from the precursor's average weight,

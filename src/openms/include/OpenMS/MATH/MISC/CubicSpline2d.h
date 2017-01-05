@@ -80,6 +80,22 @@ public:
      * @param m (x,y) coordinates of input data points
      */
     CubicSpline2d(const std::map<double, double>& m);
+    
+    /**
+     * @brief constructor of spline interpolation
+     *
+     * Use when the coefficients and knots are already known and 
+     * therefore spline construction is unnecessary.
+     * 
+     * @param a constant spline coefficients
+     * @param b linear spline coefficients
+     * @param c quadratic spline coefficients
+     * @param d cubic spline coefficients
+     * @param x knots
+     */
+    CubicSpline2d(const std::vector<double>& a, const std::vector<double>& b, 
+                  const std::vector<double>& c, const std::vector<double>& d, 
+                  const std::vector<double>& x);
 
     /**
      * @brief evaluates the spline at position x

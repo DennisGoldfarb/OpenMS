@@ -86,6 +86,29 @@ namespace OpenMS
     init_(x, y);
   }
 
+  CubicSpline2d::CubicSpline2d(const std::vector<double>& a, const std::vector<double>& b,
+                  const std::vector<double>& c, const std::vector<double>& d, const std::vector<double>& x)
+  {
+      if (a.size() != b.size() || a.size() != c.size() || a.size() != d.size())
+      {
+        throw Exception::IllegalArgument(__FILE__, __LINE__, OPENMS_PRETTY_FUNCTION, "Arrays must be the same length.");
+      }
+      if (a.size() != x.size() - 1)
+      {
+        throw Exception::IllegalArgument(__FILE__, __LINE__, OPENMS_PRETTY_FUNCTION, "Knots array length must equal coefficient array length + 1.");
+      }
+      if (a.size() < 1)
+      {
+        throw Exception::IllegalArgument(__FILE__, __LINE__, OPENMS_PRETTY_FUNCTION, "Must have at least one coefficient.");
+      }
+
+      a_ = a;
+      b_ = b;
+      c_ = c;
+      d_ = d;
+      x_ = x;
+  }
+
   double CubicSpline2d::eval(double x) const
   {
     if (x < x_.front() || x > x_.back())
