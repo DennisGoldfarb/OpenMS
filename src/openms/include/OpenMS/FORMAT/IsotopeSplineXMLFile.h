@@ -39,7 +39,7 @@
 #include <OpenMS/FORMAT/XMLFile.h>
 #include <OpenMS/FORMAT/Base64.h>
 #include <OpenMS/CHEMISTRY/IsotopeSplineDB.h>
-#include <OpenMS/Math/MISC/CubicSpline2d.h>
+#include <OpenMS/MATH/MISC/CubicSpline2d.h>
 
 
 #include <vector>
