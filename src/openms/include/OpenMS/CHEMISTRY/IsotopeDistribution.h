@@ -135,6 +135,13 @@ public:
     void estimateFromPeptideWeight(double average_weight);
 
     /**
+        @brief Estimate peptide isotope distribution from weight and number of isotopes that should be reported
+
+        A precomputed spline is used if the request is in the spline models' bounds.
+    */
+    void estimateFromPeptideWeightFast(double average_weight);
+
+    /**
         @brief Estimate peptide IsotopeDistribution from average weight and exact number of sulfurs
 
         @param average_weight: Average weight to estimate an EmpiricalFormula for
@@ -219,6 +226,8 @@ public:
         @pre precursor_isotopes.size() > 0
     */
     void estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor, double average_weight_fragment, UInt S_fragment, const std::set<UInt>& precursor_isotopes);
+
+    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes);
 
     /**
         @brief Estimate RNA fragment IsotopeDistribution from the precursor's average weight,

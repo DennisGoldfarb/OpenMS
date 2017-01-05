@@ -106,6 +106,29 @@ START_SECTION(CubicSpline2d(const std::map<double, double>& m))
   TEST_NOT_EQUAL(sp4, nullPointer)
 END_SECTION
 
+START_SECTION(CubicSpline2d(const std::vector<double>& a, const std::vector<double>& b, const std::vector<double>& c, const std::vector<double>& d, const std::vector<double>& x))
+  std::vector<double> a;
+  a.push_back(1.0);
+
+  std::vector<double> b;
+  b.push_back(1.0);
+
+  std::vector<double> c;
+  c.push_back(1.0);
+
+  std::vector<double> d;
+  d.push_back(1.0);
+
+  std::vector<double> x;
+  x.push_back(0.0);
+  x.push_back(10.0);
+
+  CubicSpline2d* sp = new CubicSpline2d(a, b, c, d, x);
+  TEST_NOT_EQUAL(sp, nullPointer)
+
+  TEST_EQUAL(sp->eval(5), 156); //((1 * 5 + 1) * 5 + 1) * 5 + 1 = 156
+END_SECTION
+
 START_SECTION(double eval(double x))
   // near border of spline range
   TEST_REAL_SIMILAR(sp1.eval(486.785), 35173.1841778984);
