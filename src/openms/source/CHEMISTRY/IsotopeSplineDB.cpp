@@ -45,7 +45,7 @@ namespace OpenMS
     IsotopeSplineDB::IsotopeSplineDB()
     {
       readSplinesFromFile_("CHEMISTRY/IsotopeSplines.xml");
-      min_mass_ = 50;
+      min_mass_ = 75;
       max_mass_ = 10000;
       max_isotope_ = 20;
     }
@@ -65,7 +65,7 @@ namespace OpenMS
 
     void IsotopeSplineDB::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope)
     {
-      UInt max_depth = max_isotope+1;
+      UInt max_depth = max_isotope;
       result.resize(max_depth);
 
       for (UInt isotope = 0; isotope < max_depth; ++isotope)

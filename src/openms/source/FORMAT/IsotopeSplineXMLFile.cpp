@@ -113,10 +113,10 @@ namespace OpenMS
 
         for (UInt i = 0; i < data.size(); i+=spline_order_)
         {
-          a_.push_back(data[i+3]);
-          b_.push_back(data[i+2]);
-          c_.push_back(data[i+1]);
-          d_.push_back(data[i]);
+          a_.push_back(data[i]);
+          b_.push_back(data[i+1]);
+          c_.push_back(data[i+2]);
+          d_.push_back(data[i+3]);
         }
       }
     }
