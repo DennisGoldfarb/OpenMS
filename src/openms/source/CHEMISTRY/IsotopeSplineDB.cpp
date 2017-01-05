@@ -101,9 +101,9 @@ namespace OpenMS
 
     void IsotopeSplineDB::clearModels_()
     {
-      for (Iterator itr = models.begin(); itr != models.end(); )
+      for (Iterator itr = models.begin(); itr != models.end(); ++itr)
       {
-        itr = models.erase(itr);
+        delete itr->second;
       }
       models.clear();
     }
