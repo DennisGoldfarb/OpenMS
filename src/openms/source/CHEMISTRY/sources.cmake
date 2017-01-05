@@ -12,6 +12,7 @@ EnzymaticDigestion.cpp
 Enzyme.cpp
 EnzymesDB.cpp
 IsotopeDistribution.cpp
+IsotopeSplineDB.cpp
 ModificationDefinition.cpp
 ModificationDefinitionsSet.cpp
 ModificationsDB.cpp

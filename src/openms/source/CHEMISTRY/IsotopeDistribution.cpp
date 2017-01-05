@@ -40,6 +40,7 @@
 
 #include <OpenMS/CHEMISTRY/IsotopeDistribution.h>
 #include <OpenMS/CHEMISTRY/EmpiricalFormula.h>
+#include <OpenMS/CHEMISTRY/IsotopeSplineDB.h>
 
 using namespace std;
 
@@ -168,6 +169,20 @@ namespace OpenMS
     estimateFromWeightAndComp(average_weight, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
   }
 
+  void IsotopeDistribution::estimateFromPeptideWeightFast(double average_weight)
+  {
+    // Check if the splines can completely handle this request
+    if (IsotopeSplineDB::getInstance()->inModelBounds(average_weight, this->max_isotope_))
+    {
+      ContainerType result;
+      IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, this->max_isotope_);
+      distribution_ = result;
+    }
+    else
+    {
+      estimateFromPeptideWeight(average_weight);
+    }
+  }
 
   void IsotopeDistribution::estimateFromRNAWeight(double average_weight)
   {
@@ -187,23 +202,36 @@ namespace OpenMS
       distribution_ = ef.getIsotopeDistribution(max_isotope_).getContainer();
   }
 
-  void IsotopeDistribution::estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes)
+  void IsotopeDistribution::estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
   {
     // Element counts are from Senko's Averagine model
     estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
   }
 
-  void IsotopeDistribution::estimateForFragmentFromRNAWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes)
+  void IsotopeDistribution::estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
+  {
+    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end()) + 1;
+
+    IsotopeDistribution id_fragment(max_depth);
+    id_fragment.estimateFromPeptideWeightFast(average_weight_fragment);
+
+    IsotopeDistribution id_comp_fragment(max_depth);
+    id_comp_fragment.estimateFromPeptideWeightFast(average_weight_precursor-average_weight_fragment);
+
+    calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
+  }
+
+  void IsotopeDistribution::estimateForFragmentFromRNAWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
   {
     estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 9.75, 12.25, 3.75, 7, 0, 1);
   }
 
-  void IsotopeDistribution::estimateForFragmentFromDNAWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes)
+  void IsotopeDistribution::estimateForFragmentFromDNAWeight(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
   {
     estimateForFragmentFromWeightAndComp(average_weight_precursor, average_weight_fragment, precursor_isotopes, 9.75, 12.25, 3.75, 6, 0, 1);
   }
 
-  void IsotopeDistribution::estimateForFragmentFromWeightAndComp(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes, double C, double H, double N, double O, double S, double P)
+  void IsotopeDistribution::estimateForFragmentFromWeightAndComp(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes, double C, double H, double N, double O, double S, double P)
   {
     UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end()) + 1;
 
@@ -218,7 +246,7 @@ namespace OpenMS
     calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
   }
 
-  void IsotopeDistribution::calcFragmentIsotopeDist(const IsotopeDistribution& fragment_isotope_dist, const IsotopeDistribution& comp_fragment_isotope_dist, const std::set<UInt>& precursor_isotopes)
+  void IsotopeDistribution::calcFragmentIsotopeDist(const IsotopeDistribution& fragment_isotope_dist, const IsotopeDistribution& comp_fragment_isotope_dist, const std::vector<UInt>& precursor_isotopes)
   {
     ContainerType result;
     calcFragmentIsotopeDist_(result, fragment_isotope_dist.distribution_, comp_fragment_isotope_dist.distribution_, precursor_isotopes);
@@ -382,7 +410,7 @@ namespace OpenMS
     return;
   }
 
-  void IsotopeDistribution::calcFragmentIsotopeDist_(ContainerType& result, const ContainerType& fragment_isotope_dist, const ContainerType& comp_fragment_isotope_dist, const std::set<UInt>& precursor_isotopes)
+  void IsotopeDistribution::calcFragmentIsotopeDist_(ContainerType& result, const ContainerType& fragment_isotope_dist, const ContainerType& comp_fragment_isotope_dist, const std::vector<UInt>& precursor_isotopes)
   {
     if (fragment_isotope_dist.empty() || comp_fragment_isotope_dist.empty())
     {
@@ -445,7 +473,7 @@ namespace OpenMS
     //
     for (Size i = 0; i < fragment_isotope_dist_l.size(); ++i)
     {
-      for (std::set<UInt>::const_iterator precursor_itr = precursor_isotopes.begin(); precursor_itr != precursor_isotopes.end(); ++precursor_itr)
+      for (std::vector<UInt>::const_iterator precursor_itr = precursor_isotopes.begin(); precursor_itr != precursor_isotopes.end(); ++precursor_itr)
       {
         if (*precursor_itr >= i &&
                 (*precursor_itr-i) < comp_fragment_isotope_dist_l.size())
