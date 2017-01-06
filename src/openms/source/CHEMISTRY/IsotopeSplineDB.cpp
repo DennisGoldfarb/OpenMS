@@ -45,7 +45,7 @@ namespace OpenMS
     IsotopeSplineDB::IsotopeSplineDB()
     {
       readSplinesFromFile_("CHEMISTRY/IsotopeSplines.xml");
-      min_mass_ = 75;
+      min_mass_ = 334;
       max_mass_ = 10000;
       max_isotope_ = 20;
     }
