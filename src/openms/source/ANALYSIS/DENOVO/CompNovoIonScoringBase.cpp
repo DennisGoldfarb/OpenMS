@@ -253,7 +253,7 @@ namespace OpenMS
     }
 
     // get the theoretical isotope distribution
-    IsotopeDistribution iso_dist(iso_pattern.size());
+    IsotopeDistribution iso_dist(iso_pattern.size() - 1);
     iso_dist.estimateFromPeptideWeight((it_pos - charge * Constants::PROTON_MASS_U) * charge + Constants::PROTON_MASS_U);
 
     // compare the distribution sizes

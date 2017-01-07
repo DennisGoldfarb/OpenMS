@@ -105,7 +105,7 @@ namespace OpenMS
       // create the theoretical distribution
       IsotopeDistribution d;
       TheoreticalIsotopePattern isotopes;
-      d.setMaxIsotope(nr_isotopes);
+      d.setMaxIsotope(nr_isotopes - 1);
       //std::cout << product_mz * charge << std::endl;
       d.estimateFromPeptideWeight(product_mz * charge);
 

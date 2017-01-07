@@ -143,17 +143,18 @@ START_SECTION(IsotopeDistribution& operator *= (Size factor))
 	EmpiricalFormula ef("C222N190O110");
 	IsotopeDistribution id = ef.getIsotopeDistribution(11);
 	IsotopeDistribution::ContainerType container;
-	container.push_back(make_pair<Size, double>(7084, 0.0349429));
-	container.push_back(make_pair<Size, double>(7085, 0.109888));
-	container.push_back(make_pair<Size, double>(7086, 0.180185));
-	container.push_back(make_pair<Size, double>(7087, 0.204395));
-	container.push_back(make_pair<Size, double>(7088, 0.179765));
-	container.push_back(make_pair<Size, double>(7089, 0.130358));
-	container.push_back(make_pair<Size, double>(7090, 0.0809864));
-	container.push_back(make_pair<Size, double>(7091, 0.0442441));
-	container.push_back(make_pair<Size, double>(7092, 0.0216593));
-	container.push_back(make_pair<Size, double>(7093, 0.00963707));
-	container.push_back(make_pair<Size, double>(7094, 0.0039406));
+	container.push_back(make_pair<Size, double>(7084, 0.034890));
+	container.push_back(make_pair<Size, double>(7085, 0.109723));
+	container.push_back(make_pair<Size, double>(7086, 0.179916));
+	container.push_back(make_pair<Size, double>(7087, 0.204089));
+	container.push_back(make_pair<Size, double>(7088, 0.179496));
+	container.push_back(make_pair<Size, double>(7089, 0.130163));
+	container.push_back(make_pair<Size, double>(7090, 0.080865));
+	container.push_back(make_pair<Size, double>(7091, 0.044178));
+	container.push_back(make_pair<Size, double>(7092, 0.021627));
+	container.push_back(make_pair<Size, double>(7093, 0.009622));
+	container.push_back(make_pair<Size, double>(7094, 0.003934));
+    container.push_back(make_pair<Size, double>(7095, 0.001491));
 
 	for (Size i = 0; i != id.size(); ++i)
 	{
@@ -257,26 +258,26 @@ START_SECTION(void estimateFromPeptideWeight(double average_weight))
 	// hard to test as this is an rough estimate
 	IsotopeDistribution iso(3);
 	iso.estimateFromPeptideWeight(100.0);
-	TEST_REAL_SIMILAR(iso.begin()->second, 0.949735)
+	TEST_REAL_SIMILAR(iso.begin()->second, 0.949634)
 
 	iso.estimateFromPeptideWeight(1000.0);
-	TEST_REAL_SIMILAR(iso.begin()->second, 0.586906)
+	TEST_REAL_SIMILAR(iso.begin()->second, 0.573909)
 
 	iso.estimateFromPeptideWeight(10000.0);
-	TEST_REAL_SIMILAR(iso.begin()->second, 0.046495)
+	TEST_REAL_SIMILAR(iso.begin()->second, 0.019883)
 END_SECTION
 
 START_SECTION(void estimateFromRNAWeight(double average_weight))
     // hard to test as this is an rough estimate
     IsotopeDistribution iso(3);
     iso.estimateFromRNAWeight(100.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.958166)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.958017)
 
     iso.estimateFromRNAWeight(1000.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.668538)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.657271)
 
     iso.estimateFromRNAWeight(10000.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.080505)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.043211)
 END_SECTION
 
 
@@ -284,13 +285,13 @@ START_SECTION(void estimateFromDNAWeight(double average_weight))
     // hard to test as this is an rough estimate
     IsotopeDistribution iso(3);
     iso.estimateFromDNAWeight(100.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.958166)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.958017)
 
     iso.estimateFromDNAWeight(1000.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.657083)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.646086)
 
     iso.estimateFromDNAWeight(10000.0);
-    TEST_REAL_SIMILAR(iso.begin()->second, 0.075138)
+    TEST_REAL_SIMILAR(iso.begin()->second, 0.039409)
 END_SECTION
 
 START_SECTION(void estimateFromWeightAndComp(double average_weight, double C, double H, double N, double O, double S, double P))

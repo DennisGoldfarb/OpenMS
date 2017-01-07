@@ -359,7 +359,7 @@ START_SECTION(([EXTRA] test isotope clusters for all peak types))
   TheoreticalSpectrumGenerator t_gen;
   Param params;
   params.setValue("add_isotopes", "true");
-  params.setValue("max_isotope", 2);
+  params.setValue("max_isotope", 1);
   t_gen.setParameters(params);
 
   // isotope cluster for y-ions

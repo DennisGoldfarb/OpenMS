@@ -404,7 +404,7 @@ namespace OpenMS
     // construct averagine distribution
     IsotopeDistribution distribution;
     vector<double> averagine_pattern;
-    distribution.setMaxIsotope(pattern.size());
+    distribution.setMaxIsotope(pattern.size() - 1);
     if (averagine_type_ == "peptide")
     {
         distribution.estimateFromPeptideWeight(m);
