@@ -29,8 +29,8 @@ cdef extern from "<OpenMS/CHEMISTRY/EmpiricalFormula.h>" namespace "OpenMS":
         # @brief returns the isotope distribution of the formula
         #   *	The details of the calculation of the isotope distribution
         #   * are described in the doc to the IsotopeDistribution class.
-        #   *	@param max_depth: this parameter gives the max isotope which is considered, if 0 all are reported
-        IsotopeDistribution getIsotopeDistribution(UInt max_depth) nogil except +
+        #   *	@param max_isotope: this parameter gives the max isotope which is considered, if 0 all are reported
+        IsotopeDistribution getIsotopeDistribution(UInt max_isotope) nogil except +
 
         # @brief returns the fragment isotope distribution of this conditioned
         # on a precursor formula and a list of isolated precursor isotopes.

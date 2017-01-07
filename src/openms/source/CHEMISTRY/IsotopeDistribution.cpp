@@ -240,9 +240,9 @@ namespace OpenMS
 
     ContainerType::size_type r_max = left_l.size() + right_l.size() - 1;
 
-    if ((ContainerType::size_type)max_isotope_ != 0 && r_max > (ContainerType::size_type)max_isotope_)
+    if ((ContainerType::size_type)max_isotope_ != 0 && r_max > (ContainerType::size_type)(max_isotope_ + 1))
     {
-      r_max = (ContainerType::size_type)max_isotope_;
+      r_max = (ContainerType::size_type)(max_isotope_ + 1);
     }
 
     // pre-fill result with masses
@@ -366,9 +366,9 @@ namespace OpenMS
 
     ContainerType::size_type r_max = fragment_isotope_dist_l.size();
 
-    if ((ContainerType::size_type)max_isotope_ != 0 && r_max > (ContainerType::size_type)max_isotope_)
+    if ((ContainerType::size_type)max_isotope_ != 0 && r_max > (ContainerType::size_type)(max_isotope_+1))
     {
-      r_max = (ContainerType::size_type)max_isotope_;
+      r_max = (ContainerType::size_type)(max_isotope_ + 1);
     }
 
     // pre-fill result with masses

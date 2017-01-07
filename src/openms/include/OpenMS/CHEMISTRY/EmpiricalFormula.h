@@ -145,15 +145,15 @@ public:
       The details of the calculation of the isotope distribution
       are described in the doc to the IsotopeDistribution class.
 
-      @param max_depth: the maximum isotope which is considered, if 0 all are reported
+      @param max_isotope: the maximum isotope which is considered, if 0 all are reported
     */
-    IsotopeDistribution getIsotopeDistribution(UInt max_depth) const;
+    IsotopeDistribution getIsotopeDistribution(UInt max_isotope) const;
 
     /**
       @brief returns the fragment isotope distribution of this given a precursor formula
       and conditioned on a list of isolated precursor isotopes.
 
-      The max_depth of the isotopic distribution is set to max(precursor_isotopes)+1.
+      The max_isotope of the isotopic distribution is set to max(precursor_isotopes)+1.
       @param precursor: the empirical formula of the precursor
       @param precursor_isotopes: the precursor isotopes that were isolated
       @return the conditional IsotopeDistribution of the fragment

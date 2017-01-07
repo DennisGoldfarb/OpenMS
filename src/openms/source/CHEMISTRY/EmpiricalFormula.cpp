@@ -138,14 +138,14 @@ namespace OpenMS
     return true;
   }
 
-  IsotopeDistribution EmpiricalFormula::getIsotopeDistribution(UInt max_depth) const
+  IsotopeDistribution EmpiricalFormula::getIsotopeDistribution(UInt max_isotope) const
   {
-    IsotopeDistribution result(max_depth);
+    IsotopeDistribution result(max_isotope);
     MapType_::const_iterator it = formula_.begin();
     for (; it != formula_.end(); ++it)
     {
       IsotopeDistribution tmp = it->first->getIsotopeDistribution();
-      tmp.setMaxIsotope(max_depth);
+      tmp.setMaxIsotope(max_isotope);
       result += tmp * it->second;
     }
     result.renormalize();
@@ -155,13 +155,13 @@ namespace OpenMS
   IsotopeDistribution EmpiricalFormula::getConditionalFragmentIsotopeDist(const EmpiricalFormula& precursor, const std::vector<UInt>& precursor_isotopes) const
   {
     // A fragment's isotopes can only be as high as the largest isolated precursor isotope.
-    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end())+1;
+    UInt max_isotope = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end());
 
     // Treat *this as the fragment molecule
     EmpiricalFormula complementary_fragment = precursor-*this;
 
-    IsotopeDistribution fragment_isotope_dist = getIsotopeDistribution(max_depth);
-    IsotopeDistribution comp_fragment_isotope_dist = complementary_fragment.getIsotopeDistribution(max_depth);
+    IsotopeDistribution fragment_isotope_dist = getIsotopeDistribution(max_isotope);
+    IsotopeDistribution comp_fragment_isotope_dist = complementary_fragment.getIsotopeDistribution(max_isotope);
 
     IsotopeDistribution result;
     result.calcFragmentIsotopeDist(fragment_isotope_dist, comp_fragment_isotope_dist, precursor_isotopes);

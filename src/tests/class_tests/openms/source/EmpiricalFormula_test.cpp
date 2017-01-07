@@ -321,7 +321,7 @@ START_SECTION(ConstIterator end() const)
   NOT_TESTABLE
 END_SECTION
 
-START_SECTION(IsotopeDistribution getIsotopeDistribution(UInt max_depth) const)
+START_SECTION(IsotopeDistribution getIsotopeDistribution(UInt max_isotope) const)
   EmpiricalFormula ef("C");
   IsotopeDistribution iso = ef.getIsotopeDistribution(20);
   double result[] = { 0.9893, 0.0107};
