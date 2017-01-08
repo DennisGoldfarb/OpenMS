@@ -182,6 +182,8 @@ public:
 
     void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
 
+    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+
     /**
         @brief Estimate RNA fragment IsotopeDistribution from the precursor's average weight,
         fragment's average weight, and a list of isolated precursor isotopes.
