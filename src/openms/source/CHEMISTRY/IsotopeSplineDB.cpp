@@ -65,10 +65,9 @@ namespace OpenMS
 
     void IsotopeSplineDB::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope)
     {
-      UInt max_depth = max_isotope;
-      result.resize(max_depth);
+      result.resize(max_isotope);
 
-      for (UInt isotope = 0; isotope < max_depth; ++isotope)
+      for (UInt isotope = 0; isotope < max_isotope; ++isotope)
       {
         ModelAttributes att(0, isotope);
         result[isotope] = make_pair(Size(average_weight + isotope), models[att]->eval(average_weight));
