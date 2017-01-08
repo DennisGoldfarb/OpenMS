@@ -180,7 +180,7 @@ public:
     */
     void estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes);
 
-    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
+    void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes);
 
     void estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes);
 
