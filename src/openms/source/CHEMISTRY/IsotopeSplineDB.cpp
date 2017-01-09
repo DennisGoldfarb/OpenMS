@@ -70,7 +70,9 @@ namespace OpenMS
       for (UInt isotope = 0; isotope < max_isotope; ++isotope)
       {
         ModelAttributes att(0, isotope);
-        result[isotope] = make_pair(Size(average_weight + isotope), models[att]->eval(average_weight));
+        double probability = models[att]->eval(average_weight);
+        //double probability = std::max(0.0, models[att]->eval(average_weight));
+        result[isotope] = make_pair(Size(average_weight + isotope), probability);
       }
 
     }
