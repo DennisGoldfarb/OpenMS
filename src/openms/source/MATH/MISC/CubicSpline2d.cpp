@@ -36,7 +36,6 @@
 #include <OpenMS/MATH/MISC/CubicSpline2d.h>
 
 #include <vector>
-#include <map>
 
 using namespace std;
 
@@ -159,6 +158,11 @@ namespace OpenMS
     {
       return 6 * d_[i];
     }
+  }
+
+  bool CubicSpline2d::inBounds(double x) const
+  {
+    return x > x_.front() && x < x_.back();
   }
 
   void CubicSpline2d::init_(const std::vector<double>& x, const std::vector<double>& y)

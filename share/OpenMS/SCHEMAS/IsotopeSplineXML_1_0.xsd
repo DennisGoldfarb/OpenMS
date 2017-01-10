@@ -10,6 +10,7 @@
     </xs:element>
 
     <xs:complexType name="modelsType">
+        <xs:attribute name="numModels" type="xs:positiveInteger" use="required"/>
         <xs:sequence minOccurs="1">
             <xs:element name="model" type="individualModelType"/>
         </xs:sequence>

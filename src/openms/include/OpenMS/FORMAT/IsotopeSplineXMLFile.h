@@ -74,7 +74,7 @@ namespace OpenMS
             @exception Exception::FileNotFound is thrown if the file could not be opened
             @exception Exception::ParseError is thrown if an error occurs during parsing
         */
-        void load(const String &filename, std::map<ModelAttributes, CubicSpline2d*>* models);
+        void load(const String &filename, std::vector<CubicSpline2d>* models);
 
     protected:
 
@@ -97,9 +97,10 @@ namespace OpenMS
         /// @name members for loading data
         //@{
         /// model
-        std::map<ModelAttributes, CubicSpline2d*> *models_;
-        ModelAttributes modelAttributes_;
-        CubicSpline2d* model_;
+        std::vector<CubicSpline2d> *models_;
+        UInt num_models_;
+        Int num_sulfur_;
+        UInt isotope_;
         Base64::ByteOrder byteOrder_;
         UInt precision_;
         UInt length_;

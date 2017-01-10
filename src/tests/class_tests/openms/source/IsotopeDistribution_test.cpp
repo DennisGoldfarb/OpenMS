@@ -46,6 +46,7 @@
 #include <iterator>
 #include <utility>
 #include <OpenMS/CHEMISTRY/EmpiricalFormula.h>
+#include <OpenMS/CHEMISTRY/IsotopeSplineDB.h>
 
 #include <OpenMS/CONCEPT/ClassTest.h>
 #include <OpenMS/test_config.h>
@@ -259,7 +260,7 @@ START_SECTION(void estimateFromPeptideWeight(double average_weight))
 	iso.estimateFromPeptideWeight(100.0);
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.949735)
 
-	iso.estimateFromPeptideWeight(1000.0);
+	iso.estimateFromPeptideWeightFast(1000.0);
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.586906)
 
 	iso.estimateFromPeptideWeight(10000.0);

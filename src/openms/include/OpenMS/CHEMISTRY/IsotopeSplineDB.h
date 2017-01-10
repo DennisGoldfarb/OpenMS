@@ -36,7 +36,7 @@
 #ifndef OPENMS_HOST_ISOTOPESPLINEDB_H
 #define OPENMS_HOST_ISOTOPESPLINEDB_H
 
-#include <map>
+#include <vector>
 
 #include <OpenMS/DATASTRUCTURES/String.h>
 #include <OpenMS/CHEMISTRY/IsotopeDistribution.h>
@@ -45,20 +45,6 @@
 
 namespace OpenMS
 {
-  struct OPENMS_DLLAPI ModelAttributes {
-    Int num_sulfur;
-    Int isotope;
-
-    ModelAttributes() {}
-
-    ModelAttributes(Int S, Int i) {
-      num_sulfur = S;
-      isotope = i;
-    }
-  };
-
-  bool operator<(const ModelAttributes & lhs, const ModelAttributes & rhs);
-
   /** @ingroup Chemistry
    *  @brief holds and evaluates 2D cubic spline models for peptide isotope distributions
    *  The models stored in this DB are defined in an
@@ -69,7 +55,7 @@ namespace OpenMS
 
     public:
 
-      typedef std::map<ModelAttributes, CubicSpline2d*>::iterator Iterator;
+      typedef std::vector<CubicSpline2d>::iterator Iterator;
 
       /// this member function serves as a replacement of the constructor
       inline static IsotopeSplineDB* getInstance()
@@ -92,6 +78,11 @@ namespace OpenMS
       void approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope);
 
       bool inModelBounds(double average_weight, UInt max_isotope);
+
+      IsotopeDistribution estimateFromPeptideWeight(double average_weight, UInt max_depth);
+
+      IsotopeDistribution estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes);
+
     private:
 
     protected:
@@ -125,12 +116,9 @@ namespace OpenMS
       /// deletes all models
       void clearModels_();
 
-      double min_mass_;
-      double max_mass_;
-
       UInt max_isotope_;
 
-      std::map<ModelAttributes, CubicSpline2d*> models;
+      std::vector<CubicSpline2d> models;
   };
 
 }

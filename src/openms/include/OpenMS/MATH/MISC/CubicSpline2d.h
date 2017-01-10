@@ -97,6 +97,8 @@ public:
                   const std::vector<double>& c, const std::vector<double>& d, 
                   const std::vector<double>& x);
 
+    CubicSpline2d() {}
+
     /**
      * @brief evaluates the spline at position x
      *
@@ -112,6 +114,8 @@ public:
      * Only order 1 or 2 make sense for cubic splines.
      */
     double derivatives(double x, unsigned order) const;
+
+    bool inBounds(double x) const;
 
 private:
 

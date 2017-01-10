@@ -33,14 +33,11 @@
 // --------------------------------------------------------------------------
 
 
-#include <OpenMS/CONCEPT/LogStream.h>
-#include <OpenMS/CONCEPT/UniqueIdGenerator.h>
 #include <OpenMS/FORMAT/IsotopeSplineXMLFile.h>
 #include <OpenMS/SYSTEM/File.h>
 
 #include <iostream>
 #include <fstream>
-#include <limits>
 
 using namespace std;
 
@@ -53,7 +50,7 @@ namespace OpenMS
     {
     }
 
-    void IsotopeSplineXMLFile::load(const String& filename, std::map<ModelAttributes, CubicSpline2d*>* models)
+    void IsotopeSplineXMLFile::load(const String& filename, std::vector<CubicSpline2d>* models)
     {
       //Filename for error messages in XMLHandler
       file_ = filename;
@@ -73,18 +70,22 @@ namespace OpenMS
       d_.clear();
       x_.clear();
       base64Data_.clear();
-      modelAttributes_.num_sulfur = 0;
+      num_sulfur_ = -1;
     }
 
     void IsotopeSplineXMLFile::startElement(const XMLCh* const /*uri*/, const XMLCh* const /*local_name*/, const XMLCh* const qname, const xercesc::Attributes& attributes)
     {
       String tag = sm_.convert(qname);
       open_tags_.push_back(tag);
-
-      if (tag == "model")
+      if (tag == "models")
       {
-        optionalAttributeAsInt_(modelAttributes_.num_sulfur, attributes, "S");
-        modelAttributes_.isotope = attributeAsInt_(attributes, "isotope");
+        num_models_ = attributeAsInt_(attributes, "numModels");
+        models_->resize(num_models_);
+      }
+      else if (tag == "model")
+      {
+        optionalAttributeAsInt_(num_sulfur_, attributes, "S");
+        isotope_ = attributeAsInt_(attributes, "isotope");
         spline_order_ = attributeAsInt_(attributes, "order");
         if (spline_order_ != 4)
         {
@@ -135,8 +136,7 @@ namespace OpenMS
 
       if (tag == "model")
       {
-        model_ = new CubicSpline2d(a_, b_, c_, d_, x_);
-        models_->insert(std::make_pair(modelAttributes_, model_));
+        models_->at(isotope_) = CubicSpline2d(a_, b_, c_, d_, x_);
         resetMembers_();
       }
       else if (tag == "knots" || tag == "coefficients")
