@@ -75,15 +75,24 @@ namespace OpenMS
       virtual ~IsotopeSplineDB();
       //@}
 
-      void approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope);
+      bool inModelBounds(double average_weight, UInt max_depth) const;
 
-      bool inModelBounds(double average_weight, UInt max_isotope);
+      bool inModelBounds(double average_weight, UInt max_depth, UInt S) const;
 
-      IsotopeDistribution estimateFromPeptideWeight(double average_weight, UInt max_depth);
+      IsotopeDistribution estimateFromPeptideWeight(double average_weight, UInt max_depth) const;
 
-      IsotopeDistribution estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes);
+      IsotopeDistribution estimateFromPeptideWeightAndS(double average_weight, UInt S, UInt max_depth) const;
 
-    private:
+      IsotopeDistribution estimateForFragmentFromPeptideWeight(double average_weight_precursor,
+                                                               double average_weight_fragment,
+                                                               const std::set<UInt>& precursor_isotopes) const;
+
+      IsotopeDistribution estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor,
+                                                                   double average_weight_fragment, UInt S_fragment,
+                                                                   const std::set<UInt>& precursor_isotopes) const;
+
+
+  private:
 
     protected:
 
@@ -110,15 +119,25 @@ namespace OpenMS
       */
       void readSplinesFromFile_(const String& filename);
 
+      UInt getSulfurIndex(UInt isotope, UInt S) const;
+
+      void approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result,
+                                          double average_weight, UInt max_isotope) const;
+
+      void approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result,
+                                          double average_weight, UInt S, UInt max_isotope) const;
+
       /// deletes all sub-instances of the stored data
       void clear_();
 
       /// deletes all models
       void clearModels_();
 
-      UInt max_isotope_;
+      UInt max_depth_;
+      UInt max_sulfur_;
 
-      std::vector<CubicSpline2d> models;
+      std::vector<CubicSpline2d> models_;
+      std::vector<CubicSpline2d> sulfur_specific_models_;
   };
 
 }

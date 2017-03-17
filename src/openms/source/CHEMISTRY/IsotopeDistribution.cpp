@@ -169,20 +169,6 @@ namespace OpenMS
     estimateFromWeightAndComp(average_weight, 4.9384, 7.7583, 1.3577, 1.4773, 0.0417, 0);
   }
 
-  void IsotopeDistribution::estimateFromPeptideWeightFast(double average_weight)
-  {
-    // Check if the splines can completely handle this request
-    if (IsotopeSplineDB::getInstance()->inModelBounds(average_weight, this->max_isotope_))
-    {
-      ContainerType result;
-      IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, this->max_isotope_);
-      distribution_ = result;
-    }
-    else
-    {
-      estimateFromPeptideWeight(average_weight);
-    }
-  }
   void IsotopeDistribution::estimateFromPeptideWeightAndS(double average_weight, UInt S)
   {
     // Element counts are from Senko's Averagine model, excluding sulfur.
@@ -230,20 +216,6 @@ namespace OpenMS
 
     id_fragment.estimateFromPeptideWeightAndS(average_weight_fragment, S_fragment);
     id_comp_fragment.estimateFromPeptideWeightAndS(average_weight_comp_fragment, S_comp_fragment);
-
-    calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
-  }
-
-void IsotopeDistribution::estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::vector<UInt>& precursor_isotopes)
-  void IsotopeDistribution::estimateForFragmentFromPeptideWeightFast(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes)
-  {
-    UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end()) + 1;
-
-    IsotopeDistribution id_fragment(max_depth);
-    id_fragment.estimateFromPeptideWeightFast(average_weight_fragment);
-
-    IsotopeDistribution id_comp_fragment(max_depth);
-    id_comp_fragment.estimateFromPeptideWeightFast(average_weight_precursor-average_weight_fragment);
 
     calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
   }

@@ -57,37 +57,54 @@ namespace OpenMS
       String file = File::find(filename);
 
       IsotopeSplineXMLFile splineFile;
-      splineFile.load(file, &this->models);
+      splineFile.load(file);
 
-      max_isotope_ = this->models.size()-1;
+      models_ = splineFile.getModels();
+      sulfur_specific_models_ = splineFile.getSulfurSpecificModels();
+      max_depth_ = splineFile.getMaxIsotope() + 1;
+      max_sulfur_ = splineFile.getMaxSulfur();
     }
 
-    void IsotopeSplineDB::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope)
+    void IsotopeSplineDB::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt max_isotope) const
     {
       UInt max_depth = max_isotope;
       result.resize(max_depth);
 
       for (UInt isotope = 0; isotope < max_depth; ++isotope)
       {
-        double probability = models[isotope].eval(average_weight);
+        double probability = models_[isotope].eval(average_weight);
         //double probability = std::max(0.0, models[att]->eval(average_weight));
         result[isotope] = make_pair(Size(average_weight + isotope), probability);
       }
 
     }
 
-    bool IsotopeSplineDB::inModelBounds(double average_weight, UInt max_isotope)
+    void IsotopeSplineDB::approximateIsotopeDistribution(IsotopeDistribution::ContainerType& result, double average_weight, UInt S, UInt max_isotope) const
+    {
+      UInt max_depth = max_isotope;
+      result.resize(max_depth);
+
+      for (UInt isotope = 0; isotope < max_depth; ++isotope)
+      {
+        double probability = sulfur_specific_models_[getSulfurIndex(isotope, S)].eval(average_weight);
+        //double probability = std::max(0.0, models[att]->eval(average_weight));
+        result[isotope] = make_pair(Size(average_weight + isotope), probability);
+      }
+
+    }
+
+    bool IsotopeSplineDB::inModelBounds(double average_weight, UInt max_depth) const
     {
       // Check if max isotope is in bounds
-      if (max_isotope > max_isotope_)
+      if (max_depth > max_depth_ || max_depth == 0)
       {
         return false;
       }
 
       // Check if masses are in bounds
-      for (UInt isotope = 0; isotope < max_isotope; ++isotope)
+      for (UInt isotope = 0; isotope < max_depth; ++isotope)
       {
-        if (!models[isotope].inBounds(average_weight))
+        if (!models_[isotope].inBounds(average_weight))
         {
           return false;
         }
@@ -97,14 +114,35 @@ namespace OpenMS
       return true;
     }
 
-    IsotopeDistribution IsotopeSplineDB::estimateFromPeptideWeight(double average_weight, UInt max_depth)
+    bool IsotopeSplineDB::inModelBounds(double average_weight, UInt max_depth, UInt S) const
+    {
+      // Check if max isotope and sulfur are in bounds
+      if (max_depth > max_depth_ || S > max_sulfur_ || max_depth == 0)
+      {
+        return false;
+      }
+
+      // Check if masses are in bounds
+      for (UInt isotope = 0; isotope < max_depth; ++isotope)
+      {
+        if (!sulfur_specific_models_[getSulfurIndex(isotope, S)].inBounds(average_weight))
+        {
+          return false;
+        }
+      }
+
+      // All checks passed
+      return true;
+    }
+
+    IsotopeDistribution IsotopeSplineDB::estimateFromPeptideWeight(double average_weight, UInt max_depth) const
     {
       IsotopeDistribution id(max_depth);
       // Check if the splines can completely handle this request
-      if (getInstance()->inModelBounds(average_weight, getInstance()->max_isotope_))
+      if (getInstance()->inModelBounds(average_weight, max_depth))
       {
         IsotopeDistribution::ContainerType result;
-        IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, max_isotope_);
+        IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, max_depth);
         id.set(result);
       }
       else
@@ -115,15 +153,46 @@ namespace OpenMS
       return id;
     }
 
-    IsotopeDistribution IsotopeSplineDB::estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes)
+    IsotopeDistribution IsotopeSplineDB::estimateForFragmentFromPeptideWeight(double average_weight_precursor, double average_weight_fragment, const std::set<UInt>& precursor_isotopes) const
     {
       UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end()) + 1;
 
-      IsotopeDistribution id_fragment(max_depth);
-      id_fragment.estimateFromPeptideWeightFast(average_weight_fragment);
+      IsotopeDistribution id_fragment = estimateFromPeptideWeight(average_weight_fragment, max_depth);
+      IsotopeDistribution id_comp_fragment = estimateFromPeptideWeight(average_weight_precursor - average_weight_fragment, max_depth);
 
-      IsotopeDistribution id_comp_fragment(max_depth);
-      id_comp_fragment.estimateFromPeptideWeightFast(average_weight_precursor - average_weight_fragment);
+      IsotopeDistribution result(max_depth);
+      result.calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
+
+      return result;
+    }
+
+    IsotopeDistribution IsotopeSplineDB::estimateFromPeptideWeightAndS(double average_weight, UInt S, UInt max_depth) const
+    {
+      IsotopeDistribution id(max_depth);
+      // Check if the splines can completely handle this request
+      if (getInstance()->inModelBounds(average_weight, max_depth, S))
+      {
+        IsotopeDistribution::ContainerType result;
+        IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, S, max_depth);
+        id.set(result);
+      }
+      else
+      {
+        id.estimateFromPeptideWeightAndS(average_weight, S);
+      }
+
+      return id;
+    }
+
+    IsotopeDistribution IsotopeSplineDB::estimateForFragmentFromPeptideWeightAndS(double average_weight_precursor, UInt S_precursor,
+                                                              double average_weight_fragment, UInt S_fragment,
+                                                              const std::set<UInt> &precursor_isotopes) const
+    {
+      UInt max_depth = *std::max_element(precursor_isotopes.begin(), precursor_isotopes.end()) + 1;
+
+      IsotopeDistribution id_fragment = estimateFromPeptideWeightAndS(average_weight_fragment, S_fragment, max_depth);
+      IsotopeDistribution id_comp_fragment = estimateFromPeptideWeightAndS(average_weight_precursor - average_weight_fragment,
+                                                                           S_precursor - S_fragment, max_depth);
 
       IsotopeDistribution result(max_depth);
       result.calcFragmentIsotopeDist(id_fragment, id_comp_fragment, precursor_isotopes);
@@ -132,13 +201,19 @@ namespace OpenMS
     }
 
 
-      void IsotopeSplineDB::clear_()
+    void IsotopeSplineDB::clear_()
     {
       clearModels_();
     }
 
     void IsotopeSplineDB::clearModels_()
     {
-      models.clear();
+      models_.clear();
+      sulfur_specific_models_.clear();
+    }
+
+    UInt IsotopeSplineDB::getSulfurIndex(UInt isotope, UInt S) const
+    {
+      return (S * max_depth_) + isotope;
     }
 }

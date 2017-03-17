@@ -10,7 +10,9 @@
     </xs:element>
 
     <xs:complexType name="modelsType">
-        <xs:attribute name="numModels" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="maxIsotope" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="maxSulfur" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="createdDate" type="xs:date" use="required"/>
         <xs:sequence minOccurs="1">
             <xs:element name="model" type="individualModelType"/>
         </xs:sequence>

@@ -50,11 +50,10 @@ namespace OpenMS
     {
     }
 
-    void IsotopeSplineXMLFile::load(const String& filename, std::vector<CubicSpline2d>* models)
+    void IsotopeSplineXMLFile::load(const String& filename)
     {
       //Filename for error messages in XMLHandler
       file_ = filename;
-      this->models_ = models;
 
       resetMembers_();
 
@@ -70,7 +69,6 @@ namespace OpenMS
       d_.clear();
       x_.clear();
       base64Data_.clear();
-      num_sulfur_ = -1;
     }
 
     void IsotopeSplineXMLFile::startElement(const XMLCh* const /*uri*/, const XMLCh* const /*local_name*/, const XMLCh* const qname, const xercesc::Attributes& attributes)
@@ -79,12 +77,14 @@ namespace OpenMS
       open_tags_.push_back(tag);
       if (tag == "models")
       {
-        num_models_ = attributeAsInt_(attributes, "numModels");
-        models_->resize(num_models_);
+        max_isotope_ = attributeAsInt_(attributes, "maxIsotope");
+        max_sulfur_ = attributeAsInt_(attributes, "maxSulfur");
+        models_.resize(max_isotope_ + 1);
+        sulfur_specific_models_.resize((max_isotope_ + 1) * (max_sulfur_ + 1));
       }
       else if (tag == "model")
       {
-        optionalAttributeAsInt_(num_sulfur_, attributes, "S");
+        is_sulfur_model_ = optionalAttributeAsUInt_(num_sulfur_, attributes, "S");
         isotope_ = attributeAsInt_(attributes, "isotope");
         spline_order_ = attributeAsInt_(attributes, "order");
         if (spline_order_ != 4)
@@ -136,7 +136,15 @@ namespace OpenMS
 
       if (tag == "model")
       {
-        models_->at(isotope_) = CubicSpline2d(a_, b_, c_, d_, x_);
+        CubicSpline2d spline = CubicSpline2d(a_, b_, c_, d_, x_);
+        if (is_sulfur_model_)
+        {
+          sulfur_specific_models_[isotope_ + (num_sulfur_ * (max_isotope_ + 1))] = spline;
+        } else
+        {
+          models_[isotope_] = spline;
+        }
+
         resetMembers_();
       }
       else if (tag == "knots" || tag == "coefficients")
@@ -145,5 +153,24 @@ namespace OpenMS
       }
     }
 
+    UInt IsotopeSplineXMLFile::getMaxIsotope() const
+    {
+      return max_isotope_;
+    }
+
+    UInt IsotopeSplineXMLFile::getMaxSulfur() const
+    {
+      return max_sulfur_;
+    }
+
+    std::vector<CubicSpline2d> IsotopeSplineXMLFile::getModels() const
+    {
+      return models_;
+    }
+
+    std::vector<CubicSpline2d> IsotopeSplineXMLFile::getSulfurSpecificModels() const
+    {
+      return sulfur_specific_models_;
+    }
 
 } // namespace OpenMS

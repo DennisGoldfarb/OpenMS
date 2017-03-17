@@ -74,7 +74,15 @@ namespace OpenMS
             @exception Exception::FileNotFound is thrown if the file could not be opened
             @exception Exception::ParseError is thrown if an error occurs during parsing
         */
-        void load(const String &filename, std::vector<CubicSpline2d>* models);
+        void load(const String &filename);
+
+        UInt getMaxIsotope() const;
+
+        UInt getMaxSulfur() const;
+
+        std::vector<CubicSpline2d> getModels() const;
+
+        std::vector<CubicSpline2d> getSulfurSpecificModels() const;
 
     protected:
 
@@ -97,10 +105,14 @@ namespace OpenMS
         /// @name members for loading data
         //@{
         /// model
-        std::vector<CubicSpline2d> *models_;
-        UInt num_models_;
-        Int num_sulfur_;
+        std::vector<CubicSpline2d> models_;
+        std::vector<CubicSpline2d> sulfur_specific_models_;
+        UInt max_isotope_;
+        UInt max_sulfur_;
         UInt isotope_;
+        UInt num_sulfur_;
+        bool is_sulfur_model_;
+
         Base64::ByteOrder byteOrder_;
         UInt precision_;
         UInt length_;
