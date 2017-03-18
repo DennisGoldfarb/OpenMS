@@ -92,7 +92,7 @@ namespace OpenMS
                                                                    const std::set<UInt>& precursor_isotopes) const;
 
 
-  private:
+    private:
 
     protected:
 

@@ -259,8 +259,6 @@ START_SECTION(void estimateFromPeptideWeight(double average_weight))
 	iso.estimateFromPeptideWeight(100.0);
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.949735)
 
-	IsotopeDistribution iso2 = IsotopeSplineDB::getInstance()->estimateFromPeptideWeight(1000, 3);
-
 	iso.estimateFromPeptideWeight(1000.0);
 	TEST_REAL_SIMILAR(iso.begin()->second, 0.586906)
 

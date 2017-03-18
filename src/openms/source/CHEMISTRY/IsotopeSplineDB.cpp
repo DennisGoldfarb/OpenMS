@@ -144,6 +144,7 @@ namespace OpenMS
         IsotopeDistribution::ContainerType result;
         IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, max_depth);
         id.set(result);
+        id.renormalize();
       }
       else
       {
@@ -175,6 +176,7 @@ namespace OpenMS
         IsotopeDistribution::ContainerType result;
         IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, S, max_depth);
         id.set(result);
+        id.renormalize();
       }
       else
       {
