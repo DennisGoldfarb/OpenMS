@@ -77,7 +77,7 @@ namespace OpenMS
 
       bool inModelBounds(double average_weight, UInt max_depth) const;
 
-      bool inModelBounds(double average_weight, UInt max_depth, UInt S) const;
+      bool inModelBounds(double average_weight, UInt S, UInt max_depth) const;
 
       IsotopeDistribution estimateFromPeptideWeight(double average_weight, UInt max_depth) const;
 

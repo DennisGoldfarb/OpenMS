@@ -114,7 +114,7 @@ namespace OpenMS
       return true;
     }
 
-    bool IsotopeSplineDB::inModelBounds(double average_weight, UInt max_depth, UInt S) const
+    bool IsotopeSplineDB::inModelBounds(double average_weight, UInt S, UInt max_depth) const
     {
       // Check if max isotope and sulfur are in bounds
       if (max_depth > max_depth_ || S > max_sulfur_ || max_depth == 0)
@@ -171,7 +171,7 @@ namespace OpenMS
     {
       IsotopeDistribution id(max_depth);
       // Check if the splines can completely handle this request
-      if (getInstance()->inModelBounds(average_weight, max_depth, S))
+      if (getInstance()->inModelBounds(average_weight, S, max_depth))
       {
         IsotopeDistribution::ContainerType result;
         IsotopeSplineDB::getInstance()->approximateIsotopeDistribution(result, average_weight, S, max_depth);
