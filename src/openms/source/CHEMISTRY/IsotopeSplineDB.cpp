@@ -72,8 +72,7 @@ namespace OpenMS
 
       for (UInt isotope = 0; isotope < max_depth; ++isotope)
       {
-        double probability = models_[isotope].eval(average_weight);
-        //double probability = std::max(0.0, models[att]->eval(average_weight));
+        double probability = std::max(0.0, models_[isotope].eval(average_weight));
         result[isotope] = make_pair(Size(average_weight + isotope), probability);
       }
 
