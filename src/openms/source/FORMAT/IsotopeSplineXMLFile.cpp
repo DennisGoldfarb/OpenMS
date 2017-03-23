@@ -77,10 +77,10 @@ namespace OpenMS
       open_tags_.push_back(tag);
       if (tag == "models")
       {
-        max_isotope_ = attributeAsInt_(attributes, "maxIsotope");
+        max_isotope_depth_ = attributeAsInt_(attributes, "maxIsotopeDepth");
         max_sulfur_ = attributeAsInt_(attributes, "maxSulfur");
-        models_.resize(max_isotope_ + 1);
-        sulfur_specific_models_.resize((max_isotope_ + 1) * (max_sulfur_ + 1));
+        models_.resize(max_isotope_depth_);
+        sulfur_specific_models_.resize((max_isotope_depth_) * (max_sulfur_ + 1));
       }
       else if (tag == "model")
       {
@@ -139,7 +139,7 @@ namespace OpenMS
         CubicSpline2d spline = CubicSpline2d(a_, b_, c_, d_, x_);
         if (is_sulfur_model_)
         {
-          sulfur_specific_models_[isotope_ + (num_sulfur_ * (max_isotope_ + 1))] = spline;
+          sulfur_specific_models_[isotope_ + (num_sulfur_ * (max_isotope_depth_))] = spline;
         } else
         {
           models_[isotope_] = spline;
@@ -153,9 +153,9 @@ namespace OpenMS
       }
     }
 
-    UInt IsotopeSplineXMLFile::getMaxIsotope() const
+    UInt IsotopeSplineXMLFile::getMaxIsotopeDepth() const
     {
-      return max_isotope_;
+      return max_isotope_depth_;
     }
 
     UInt IsotopeSplineXMLFile::getMaxSulfur() const

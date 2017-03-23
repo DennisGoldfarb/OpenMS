@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<models maxIsotope="20" maxSulfur="10" createdDate="2017-03-18 02:41:50.021058">
+<models maxIsotopeDepth="21" maxSulfur="10" createdDate="2017-03-18 02:41:50.021058">
 	<model isotope='10' order='4'>
 		<knots precision='64' endian='little' length='11'>NV66SQzCUkBHi1LFBFWaQOfItkTqy6dAlSUrmu82sUDpUtv1UMC1QJYTiZLffblAORhfy2VdvUB8jTzHLFPAQAjFnEsefsFAA/lt/IKFwkCkcD0KF4TDQA==</knots>
 		<coefficients precision='64' endian='little' length='40'>b6dIjUW4tD7UFymxBRotvsuoX6gz3H896NytjODPvjzdxu580vbCPrI21eLNyDg+fM0+eLcMkT1Q9BvyAPMkPf6crGAKHB0/dB/EDgXvjT5D0Xp7NmnlPfcJzq66qkM9wkfiN65KUT+pdV6aOuK3Pi0yvC/59Ag+ZbkooSfIRT0GvHUtzRlwP52j5EwPWc8+dfiuABW+FT7JpuoYjPBSPeKNXH9IPYI/55ggMPLx3D4SiS5SRYMhPgpMdC7szVy9pVE3TjTFkT9f+X1AXWvkPgNUQnz9Ngw+Ycx9xBPRcz2khXFRhW+bP3W2xeHlU+w+IsHaJxZ3Lz67LkRI+neOvbbSp8TmJKI/+1fKQSq57T5qVDrqheclvkOnwoteEJ498KmGU74dpj/3VN8dBgPyPmHyMb0ZuUE+dXCvnqZMwr0=</coefficients>

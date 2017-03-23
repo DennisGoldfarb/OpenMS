@@ -61,7 +61,7 @@ namespace OpenMS
 
       models_ = splineFile.getModels();
       sulfur_specific_models_ = splineFile.getSulfurSpecificModels();
-      max_depth_ = splineFile.getMaxIsotope() + 1;
+      max_depth_ = splineFile.getMaxIsotopeDepth();
       max_sulfur_ = splineFile.getMaxSulfur();
     }
 

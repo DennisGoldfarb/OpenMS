@@ -76,7 +76,7 @@ namespace OpenMS
         */
         void load(const String &filename);
 
-        UInt getMaxIsotope() const;
+        UInt getMaxIsotopeDepth() const;
 
         UInt getMaxSulfur() const;
 
@@ -107,7 +107,7 @@ namespace OpenMS
         /// model
         std::vector<CubicSpline2d> models_;
         std::vector<CubicSpline2d> sulfur_specific_models_;
-        UInt max_isotope_;
+        UInt max_isotope_depth_;
         UInt max_sulfur_;
         UInt isotope_;
         UInt num_sulfur_;
